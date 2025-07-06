@@ -1,0 +1,189 @@
+/* Custom CSS for Food Admin Interface */
+
+/* Enhanced table styling */
+.admin-changelist table {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Food admin specific styling */
+.food-admin-header {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Image preview enhancements */
+.image-preview {
+    transition: transform 0.2s ease;
+}
+
+.image-preview:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+/* Status badge improvements */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-available {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.status-unavailable {
+    background: linear-gradient(135deg, #dc3545, #fd7e14);
+    color: white;
+}
+
+/* Form field improvements */
+.form-row {
+    background: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Action buttons styling */
+.actions select {
+    border-radius: 6px;
+    border: 2px solid #dee2e6;
+    padding: 8px 12px;
+}
+
+.actions button {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.actions button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+}
+
+/* Search box styling */
+#toolbar input[type="text"] {
+    border-radius: 20px;
+    border: 2px solid #dee2e6;
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+#toolbar input[type="text"]:focus {
+    border-color: #ff6b35;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+/* Pagination styling */
+.paginator {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.paginator a {
+    color: #ff6b35;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.paginator a:hover {
+    background: #ff6b35;
+    color: white;
+}
+
+/* Filter sidebar improvements */
+#changelist-filter {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#changelist-filter h3 {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    padding: 12px 15px;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Header customization */
+#header {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+}
+
+#branding h1 {
+    color: #ff6b35;
+    font-weight: bold;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+
+    .image-preview img,
+    .image-preview div {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .form-row {
+        padding: 10px;
+    }
+}
+
+/* Success/error message styling */
+.messagelist .success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+}
+
+.messagelist .error {
+    background: linear-gradient(135deg, #dc3545, #fd7e14);
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+}
+
+/* Button improvements */
+.default,
+input[type=submit].default,
+.submit-row input.default {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.default:hover,
+input[type=submit].default:hover,
+.submit-row input.default:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+}

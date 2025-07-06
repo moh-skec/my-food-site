@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}{{ food.name }} - Food Detail{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div
+                    style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); padding: 40px; color: white;">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="display-5 fw-bold mb-3">{{ food.name }}</h1>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-light text-dark rounded-pill px-3 py-2 me-3">
+                                    <i
+                                        class="bi bi-{{ food.available|yesno:'check-circle-fill,x-circle-fill' }} me-2"></i>
+                                    {{ food.available|yesno:'Available Now,Currently Unavailable' }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="price-display">
+                                <div class="h1 fw-bold mb-0" style="font-size: 3rem;">${{ food.price }}</div>
+                                <small class="opacity-75">per serving</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if food.image %}
+                <div class="text-center" style="padding: 0; background: #f8f9fa;">
+                    <img src="{{ food.image.url }}" alt="{{ food.name }}"
+                        style="width: 100%; max-height: 400px; object-fit: cover;">
+                </div>
+                {% endif %}
+
+                <div class="card-body p-5">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h3 class="fw-bold mb-4">
+                                <i class="bi bi-journal-text text-primary me-2"></i>Description
+                            </h3>
+                            <p class="lead text-muted lh-lg">{{ food.description|linebreaks }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="bg-light rounded-3 p-4">
+                                <h5 class="fw-bold mb-3">
+                                    <i class="bi bi-info-circle-fill text-primary me-2"></i>Food Information
+                                </h5>
+                                <div class="mb-3">
+                                    <strong class="d-block text-muted">Name</strong>
+                                    <span class="fw-medium">{{ food.name }}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong class="d-block text-muted">Price</strong>
+                                    <span class="fw-medium text-primary">${{ food.price }}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong class="d-block text-muted">Availability</strong>
+                                    <span class="badge {{ food.available|yesno:'bg-success,bg-danger' }} rounded-pill">
+                                        {{ food.available|yesno:'In Stock,Out of Stock' }}
+                                    </span>
+                                </div>
+                                {% if food.created_by %}
+                                <div class="mb-3">
+                                    <strong class="d-block text-muted">Created by</strong>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar me-2" style="width: 30px; height: 30px; background: linear-gradient(135deg, #667eea, #764ba2); 
+                                                    border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+                                                    color: white; font-size: 0.875rem; font-weight: bold;">
+                                            {{ food.created_by.username|first|upper }}
+                                        </div>
+                                        <span class="fw-medium">{{ food.created_by.username }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if food.created_at %}
+                                <div class="mb-3">
+                                    <strong class="d-block text-muted">Created on</strong>
+                                    <span class="fw-medium">{{ food.created_at|date:"F d, Y g:i A" }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white border-0 p-5 pt-0">
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="{% url 'food:list' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Menu
+                        </a>
+                        {% if food.available %}
+                        <button class="btn btn-success rounded-pill px-4">
+                            <i class="bi bi-cart-plus-fill me-2"></i>Add to Cart
+                        </button>
+                        <button class="btn btn-warning rounded-pill px-4">
+                            <i class="bi bi-heart-fill me-2"></i>Add to Favorites
+                        </button>
+                        {% else %}
+                        <button class="btn btn-secondary rounded-pill px-4" disabled>
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Currently Unavailable
+                        </button>
+                        {% endif %}
+                        {% if user.is_staff or food.created_by == user %}
+                        <a href="{% url 'food:edit' food.pk %}" class="btn btn-primary rounded-pill px-4">
+                            <i class="bi bi-pencil-fill me-2"></i>Edit Food
+                        </a>
+                        <a href="{% url 'food:delete' food.pk %}" class="btn btn-danger rounded-pill px-4">
+                            <i class="bi bi-trash-fill me-2"></i>Delete Food
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="text-center">
+                <h4 class="fw-bold mb-4">What would you like to do next?</h4>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="{% url 'food:list' %}" class="btn btn-outline-primary rounded-pill">
+                        <i class="bi bi-grid-3x3-gap-fill me-2"></i>Browse All Foods
+                    </a>
+                    <a href="{% url 'food:create' %}" class="btn btn-outline-success rounded-pill">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Add New Food
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .price-display {
+        text-align: center;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+    }
+
+    .card {
+        transition: all 0.3s ease;
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% endblock %}

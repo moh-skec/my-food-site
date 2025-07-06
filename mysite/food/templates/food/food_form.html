@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Edit {{ object.name }}{% else %}Add New Food{% endif %} - My Food Site{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+            <div class="text-center mb-5">
+                <div class="food-icon mb-3">
+                    {% if object %}
+                    <i class="bi bi-pencil-square" style="font-size: 4rem; color: var(--primary-color);"></i>
+                    {% else %}
+                    <i class="bi bi-plus-circle-fill" style="font-size: 4rem; color: var(--primary-color);"></i>
+                    {% endif %}
+                </div>
+                <h1 class="display-5 fw-bold text-primary mb-3">
+                    {% if object %}Edit Food{% else %}Add New Food{% endif %}
+                </h1>
+                <p class="lead text-muted">
+                    {% if object %}Update your delicious creation!{% else %}Share your delicious creation with the
+                    world!{% endif %}
+                </p>
+            </div>
+
+            <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div
+                    style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); padding: 30px; color: white;">
+                    <h2 class="fw-bold mb-0">
+                        {% if object %}
+                        <i class="bi bi-pencil-square me-2"></i>Edit Food Details
+                        {% else %}
+                        <i class="bi bi-journal-plus me-2"></i>Food Details
+                        {% endif %}
+                    </h2>
+                    <p class="mb-0 opacity-75">
+                        {% if object %}Update the information below{% else %}Fill in the information below{% endif %}
+                    </p>
+                </div>
+
+                <div class="card-body p-5">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-tag-fill text-primary me-2"></i>Food Name
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="{{ form.name.id_for_label }}"
+                                name="{{ form.name.name }}" value="{{ form.name.value|default:'' }}"
+                                placeholder="Enter a delicious food name..." required
+                                style="border-radius: 15px; border: 2px solid #e9ecef; transition: all 0.3s ease;">
+                            <div class="form-text">Give your food an appetizing name that customers will love!</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-card-text text-primary me-2"></i>Description
+                            </label>
+                            <textarea class="form-control" id="{{ form.description.id_for_label }}"
+                                name="{{ form.description.name }}" rows="4"
+                                placeholder="Describe what makes this food special..." required
+                                style="border-radius: 15px; border: 2px solid #e9ecef; transition: all 0.3s ease;">{{ form.description.value|default:'' }}</textarea>
+                            <div class="form-text">Share the story, ingredients, or what makes this food unique.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.price.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-currency-dollar text-primary me-2"></i>Price
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text"
+                                    style="border-radius: 15px 0 0 15px; border: 2px solid #e9ecef; border-right: none;">$</span>
+                                <input type="number" class="form-control" id="{{ form.price.id_for_label }}"
+                                    name="{{ form.price.name }}" value="{{ form.price.value|default:'' }}"
+                                    placeholder="0.00" step="0.01" min="0" required
+                                    style="border-radius: 0 15px 15px 0; border: 2px solid #e9ecef; border-left: none; transition: all 0.3s ease;">
+                            </div>
+                            <div class="form-text">Set a fair price that reflects the value of your food.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-image-fill text-primary me-2"></i>Food Image
+                            </label>
+
+                            {% if object and object.image %}
+                            <div class="mb-3 p-3 bg-light rounded-3">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4">
+                                        <img src="{{ object.image.url }}" alt="{{ object.name }}" class="img-thumbnail"
+                                            style="max-height: 120px; width: 100%; object-fit: cover;">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p class="mb-1 fw-bold">Current Image</p>
+                                        <p class="mb-0 text-muted small">{{ object.image.name }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="form-text mb-2 d-block">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Upload a new image to replace the current one, or leave empty to keep the current image.
+                            </span>
+                            {% endif %}
+
+                            <input type="file" class="form-control form-control-lg" id="{{ form.image.id_for_label }}"
+                                name="{{ form.image.name }}" accept="image/*"
+                                style="border-radius: 15px; border: 2px solid #e9ecef; transition: all 0.3s ease;">
+                            <div class="form-text">
+                                {% if object %}
+                                Upload a new mouth-watering photo to replace the current image (optional).
+                                {% else %}
+                                Upload a mouth-watering photo of your food (optional).
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <div class="form-check form-switch" style="font-size: 1.1rem;">
+                                <input class="form-check-input" type="checkbox" id="{{ form.available.id_for_label }}"
+                                    name="{{ form.available.name }}" {% if form.available.value %}checked{% endif %}
+                                    style="transform: scale(1.5);">
+                                <label class="form-check-label fw-bold ms-2" for="{{ form.available.id_for_label }}">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>Available for Order
+                                </label>
+                            </div>
+                            <div class="form-text ms-5">Toggle this to make your food available for customers to order.
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 pt-3">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-4 flex-fill">
+                                {% if object %}
+                                <i class="bi bi-check-circle-fill me-2"></i>Update Food
+                                {% else %}
+                                <i class="bi bi-check-circle-fill me-2"></i>Save Food
+                                {% endif %}
+                            </button>
+                            <a href="{% url 'food:list' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus,
+    .form-check-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+    }
+
+    .form-control:hover,
+    .input-group-text:hover+.form-control {
+        border-color: var(--secondary-color);
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-outline-secondary:hover {
+        transform: translateY(-2px);
+    }
+
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+</style>
+
+<script>
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            var forms = document.getElementsByClassName('needs-validation');
+            Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

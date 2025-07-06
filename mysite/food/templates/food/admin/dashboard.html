@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - My Food Site{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    .dashboard-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        color: white;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        border-left: 4px solid #007bff;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card.food {
+        border-left-color: #28a745;
+    }
+
+    .stat-card.users {
+        border-left-color: #17a2b8;
+    }
+
+    .stat-card.price {
+        border-left-color: #ffc107;
+    }
+
+    .stat-card.unavailable {
+        border-left-color: #dc3545;
+    }
+
+    .admin-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .quick-action-btn {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .quick-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        color: white;
+    }
+
+    .recent-foods-card {
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+    }
+
+    .food-item {
+        border-bottom: 1px solid #f8f9fa;
+        transition: background-color 0.2s ease;
+    }
+
+    .food-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .food-item:last-child {
+        border-bottom: none;
+    }
+
+    .nav-pills .nav-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+
+    .nav-pills .nav-link {
+        color: #667eea;
+        transition: all 0.3s ease;
+    }
+
+    .nav-pills .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #764ba2;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="admin-header p-4 mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2">
+                    <i class="fas fa-tachometer-alt me-3"></i>
+                    Admin Dashboard
+                </h1>
+                <p class="mb-0 opacity-75">Welcome back! Here's what's happening with your food site.</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="d-none d-md-block">
+                    <i class="fas fa-chart-line fa-3x opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills mb-4">
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'food:admin_dashboard' %}">
+                <i class="fas fa-home me-2"></i>Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'food:admin_foods' %}">
+                <i class="fas fa-utensils me-2"></i>Manage Foods
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'food:admin_users' %}">
+                <i class="fas fa-users me-2"></i>Manage Users
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'food:admin_analytics' %}">
+                <i class="fas fa-chart-bar me-2"></i>Analytics
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'admin:index' %}">
+                <i class="fas fa-cog me-2"></i>Django Admin
+            </a>
+        </li>
+    </ul>
+
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card food p-4 h-100">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                            <i class="fas fa-utensils text-success fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-1">{{ total_foods }}</h3>
+                        <p class="text-muted mb-0">Total Foods</p>
+                        <small class="text-success">{{ available_foods }} available</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card users p-4 h-100">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                            <i class="fas fa-users text-info fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-1">{{ total_users }}</h3>
+                        <p class="text-muted mb-0">Total Users</p>
+                        <small class="text-info">{{ staff_users }} staff members</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card price p-4 h-100">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                            <i class="fas fa-dollar-sign text-warning fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-1">${{ avg_price|floatformat:2 }}</h3>
+                        <p class="text-muted mb-0">Avg Price</p>
+                        <small class="text-warning">${{ min_price }} - ${{ max_price }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stat-card unavailable p-4 h-100">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+                            <i class="fas fa-exclamation-triangle text-danger fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-1">{{ unavailable_foods }}</h3>
+                        <p class="text-muted mb-0">Unavailable</p>
+                        <small class="text-danger">Need attention</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="dashboard-card p-4 h-100">
+                <h4 class="mb-4">
+                    <i class="fas fa-bolt me-2"></i>
+                    Quick Actions
+                </h4>
+                <div class="d-grid gap-3">
+                    <a href="{% url 'food:create' %}" class="btn quick-action-btn btn-lg">
+                        <i class="fas fa-plus me-2"></i>
+                        Add New Food
+                    </a>
+                    <a href="{% url 'food:admin_foods' %}" class="btn quick-action-btn btn-lg">
+                        <i class="fas fa-edit me-2"></i>
+                        Manage Foods
+                    </a>
+                    <a href="{% url 'food:admin_users' %}" class="btn quick-action-btn btn-lg">
+                        <i class="fas fa-user-cog me-2"></i>
+                        Manage Users
+                    </a>
+                    <a href="{% url 'admin:index' %}" class="btn quick-action-btn btn-lg">
+                        <i class="fas fa-cogs me-2"></i>
+                        Django Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 mb-4">
+            <div class="recent-foods-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">
+                        <i class="fas fa-clock me-2 text-primary"></i>
+                        Recent Foods
+                    </h4>
+                    <a href="{% url 'food:admin_foods' %}" class="btn btn-outline-primary btn-sm">
+                        View All
+                    </a>
+                </div>
+
+                {% if recent_foods %}
+                {% for food in recent_foods %}
+                <div class="food-item p-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            {% if food.image %}
+                            <img src="{{ food.image.url }}" alt="{{ food.name }}" class="img-fluid rounded"
+                                style="width: 60px; height: 60px; object-fit: cover;">
+                            {% else %}
+                            <div class="bg-secondary rounded d-flex align-items-center justify-content-center"
+                                style="width: 60px; height: 60px;">
+                                <i class="fas fa-image text-white"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-1">{{ food.name }}</h6>
+                            <p class="text-muted mb-0 small">
+                                {{ food.description|truncatechars:60 }}
+                            </p>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <span class="h6 text-success">${{ food.price }}</span>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            {% if food.available %}
+                            <span class="badge bg-success">Available</span>
+                            {% else %}
+                            <span class="badge bg-danger">Unavailable</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-utensils text-muted fa-3x mb-3"></i>
+                    <h5 class="text-muted">No foods available</h5>
+                    <p class="text-muted">Start by adding your first food item.</p>
+                    <a href="{% url 'food:create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add First Food
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

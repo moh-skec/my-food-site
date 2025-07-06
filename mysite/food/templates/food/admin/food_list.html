@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Foods - Admin{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    .admin-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .filter-card {
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .food-card {
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .food-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-pills .nav-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+
+    .nav-pills .nav-link {
+        color: #667eea;
+        transition: all 0.3s ease;
+    }
+
+    .nav-pills .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #764ba2;
+    }
+
+    .btn-action {
+        border-radius: 8px;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-1px);
+    }
+
+    .availability-badge {
+        border-radius: 15px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="admin-header p-4 mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2">
+                    <i class="fas fa-utensils me-3"></i>
+                    Manage Foods
+                </h1>
+                <p class="mb-0 opacity-75">View, edit, and manage all food items in your site.</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{% url 'food:create' %}" class="btn btn-light btn-lg">
+                    <i class="fas fa-plus me-2"></i>Add New Food
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Pills -->
+    <ul class="nav nav-pills mb-4">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'food:admin_dashboard' %}">
+                <i class="fas fa-home me-2"></i>Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'food:admin_foods' %}">
+                <i class="fas fa-utensils me-2"></i>Manage Foods
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'food:admin_users' %}">
+                <i class="fas fa-users me-2"></i>Manage Users
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'food:admin_analytics' %}">
+                <i class="fas fa-chart-bar me-2"></i>Analytics
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'admin:index' %}">
+                <i class="fas fa-cog me-2"></i>Django Admin
+            </a>
+        </li>
+    </ul>
+
+    <!-- Filters -->
+    <div class="filter-card p-4 mb-4">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label" for="search-input">
+                    <i class="fas fa-search me-1"></i>Search
+                </label>
+                <input type="text" id="search-input" name="search" class="form-control" placeholder="Search foods..."
+                    value="{{ current_search }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" for="availability-select">
+                    <i class="fas fa-toggle-on me-1"></i>Availability
+                </label>
+                <select id="availability-select" name="availability" class="form-select">
+                    <option value="">All</option>
+                    <option value="available" {% if current_availability == 'available' %}selected{% endif %}>
+                        Available
+                    </option>
+                    <option value="unavailable" {% if current_availability == 'unavailable' %}selected{% endif %}>
+                        Unavailable
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" for="min-price-input">
+                    <i class="fas fa-dollar-sign me-1"></i>Min Price
+                </label>
+                <input type="number" id="min-price-input" name="min_price" class="form-control" placeholder="0.00"
+                    step="0.01" value="{{ current_min_price }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" for="max-price-input">
+                    <i class="fas fa-dollar-sign me-1"></i>Max Price
+                </label>
+                <input type="number" id="max-price-input" name="max_price" class="form-control" placeholder="999.99"
+                    step="0.01" value="{{ current_max_price }}">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-filter me-1"></i>Filter
+                </button>
+                <a href="{% url 'food:admin_foods' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times me-1"></i>Clear
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Foods Grid -->
+    <div class="row">
+        {% for food in foods %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="food-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title mb-0">{{ food.name }}</h5>
+                    {% if food.available %}
+                    <span class="availability-badge bg-success text-white">Available</span>
+                    {% else %}
+                    <span class="availability-badge bg-danger text-white">Unavailable</span>
+                    {% endif %}
+                </div>
+
+                {% if food.image %}
+                <img src="{{ food.image.url }}" alt="{{ food.name }}" class="img-fluid rounded mb-3"
+                    style="width: 100%; height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="bg-light rounded mb-3 d-flex align-items-center justify-content-center"
+                    style="height: 200px;">
+                    <i class="fas fa-image text-muted fa-3x"></i>
+                </div>
+                {% endif %}
+
+                <p class="text-muted mb-3">{{ food.description|truncatechars:100 }}</p>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="h5 text-success mb-0">${{ food.price }}</span>
+                    <small class="text-muted">ID: {{ food.id }}</small>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <fieldset class="btn-group">
+                        <a href="{% url 'food:detail' food.pk %}" class="btn btn-outline-primary btn-action">
+                            <i class="fas fa-eye me-1"></i>View
+                        </a>
+                        <a href="{% url 'food:edit' food.pk %}" class="btn btn-outline-warning btn-action">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </a>
+                        <a href="{% url 'food:delete' food.pk %}" class="btn btn-outline-danger btn-action"
+                            onclick="return confirm('Are you sure you want to delete {{ food.name }}?')">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </a>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-utensils text-muted fa-4x mb-4"></i>
+                <h3 class="text-muted mb-3">No foods found</h3>
+                {% if current_search or current_availability or current_min_price or current_max_price %}
+                <p class="text-muted mb-4">No foods match your current filters. Try adjusting your search criteria.</p>
+                <a href="{% url 'food:admin_foods' %}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-times me-1"></i>Clear Filters
+                </a>
+                {% else %}
+                <p class="text-muted mb-4">Start by adding your first food item to get started.</p>
+                {% endif %}
+                <a href="{% url 'food:create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Add First Food
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <div class="d-flex justify-content-center mt-4">
+        <nav>
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.availability %}&availability={{ request.GET.availability }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.availability %}&availability={{ request.GET.availability }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.availability %}&availability={{ request.GET.availability }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.availability %}&availability={{ request.GET.availability }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
