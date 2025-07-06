@@ -1,13 +1,9 @@
-/* Custom CSS for Food Admin Interface */
-
-/* Enhanced table styling */
 .admin-changelist table {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Food admin specific styling */
 .food-admin-header {
     background: linear-gradient(135deg, #ff6b35, #f7931e);
     color: white;
@@ -16,7 +12,6 @@
     margin-bottom: 20px;
 }
 
-/* Image preview enhancements */
 .image-preview {
     transition: transform 0.2s ease;
 }
@@ -26,7 +21,6 @@
     cursor: pointer;
 }
 
-/* Status badge improvements */
 .status-badge {
     display: inline-block;
     padding: 4px 12px;
@@ -47,7 +41,6 @@
     color: white;
 }
 
-/* Form field improvements */
 .form-row {
     background: white;
     padding: 15px;
@@ -56,7 +49,6 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Action buttons styling */
 .actions select {
     border-radius: 6px;
     border: 2px solid #dee2e6;
@@ -78,7 +70,6 @@
     box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
 }
 
-/* Search box styling */
 #toolbar input[type="text"] {
     border-radius: 20px;
     border: 2px solid #dee2e6;
@@ -92,7 +83,6 @@
     box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
-/* Pagination styling */
 .paginator {
     background: white;
     padding: 15px;
@@ -114,7 +104,6 @@
     color: white;
 }
 
-/* Filter sidebar improvements */
 #changelist-filter {
     background: white;
     border-radius: 8px;
@@ -129,7 +118,6 @@
     font-size: 14px;
 }
 
-/* Header customization */
 #header {
     background: linear-gradient(135deg, #2c3e50, #34495e);
 }
@@ -139,7 +127,6 @@
     font-weight: bold;
 }
 
-/* Responsive improvements */
 @media (max-width: 768px) {
 
     .image-preview img,
@@ -153,7 +140,6 @@
     }
 }
 
-/* Success/error message styling */
 .messagelist .success {
     background: linear-gradient(135deg, #28a745, #20c997);
     border-radius: 6px;
@@ -168,7 +154,6 @@
     font-weight: 500;
 }
 
-/* Button improvements */
 .default,
 input[type=submit].default,
 .submit-row input.default {
